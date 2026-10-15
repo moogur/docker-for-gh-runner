@@ -20,4 +20,9 @@ COPY --chmod=755 entrypoint.sh /usr/local/bin/entrypoint.sh
 
 USER runner
 
+# HTTP-порта у runner'а нет: проверяем, что жив процесс Runner.Listener (связь с GitHub он держит сам).
+# start-period покрывает регистрацию при первом старте
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
+  CMD grep -qsx Runner.Listener /proc/[0-9]*/comm || exit 1
+
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
