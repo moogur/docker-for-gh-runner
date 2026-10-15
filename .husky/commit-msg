@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+# Git-хук (husky): валидация заголовка сообщения коммита.
+# Формат: [DOC-N] type(scope): subject
+# Пример: [DOC-12] feature(docs): add deploy guide
+
+# $1 — путь к файлу с текстом коммита (передаёт git). Проверяется только
+# первая строка: тело коммита — свободный текст.
+commit=$(head -1 "$1")
+
+readonly HEADER_REGEX='^\[DOC-[0-9]+\][[:space:]]+([a-z]+)\(([^)]+)\):[[:space:]]+(.+)$'
+readonly SUBJECT_MAX_LENGTH=125
+readonly TYPES=(feature bugfix ci config refactor test docs)
+
+if [[ ! "$commit" =~ $HEADER_REGEX ]]; then
+  echo "Header does not match the expected format: [DOC-N] type(scope): subject"
+  echo "value = $commit"
+  exit 1
+fi
+
+type="${BASH_REMATCH[1]}"
+scope="${BASH_REMATCH[2]}"
+subject="${BASH_REMATCH[3]}"
+
+# Точное совпадение типа со списком, без подстрок вроде 'feat' внутри 'feature'
+type_allowed=0
+for candidate in "${TYPES[@]}"; do
+  [[ "$type" == "$candidate" ]] && type_allowed=1
+done
+if [[ "$type_allowed" -ne 1 ]]; then
+  echo "Unknown type"
+  echo "value = $type"
+  exit 1
+fi
+
+# Значение должно совпадать со своей нижнерегистровой формой
+is_lowercase() {
+  local lowered
+  lowered=$(tr '[:upper:]' '[:lower:]' <<< "$1")
+  [[ "$lowered" == "$1" ]]
+}
+
+if ! is_lowercase "$scope"; then
+  echo "SCOPE is not lower case"
+  echo "value = $scope"
+  exit 1
+fi
+
+if ! is_lowercase "$subject"; then
+  echo "SUBJECT is not lower case"
+  echo "value = $subject"
+  exit 1
+fi
+
+if [[ "${#subject}" -gt "$SUBJECT_MAX_LENGTH" ]]; then
+  echo "SUBJECT is longer than the maximum length ($SUBJECT_MAX_LENGTH) - ${#subject}"
+  echo "value = $subject"
+  exit 1
+fi

@@ -1,0 +1,11 @@
+.git
+.github
+.husky
+.vscode
+node_modules
+.gitignore
+.dockerignore
+.editorconfig
+package.json
+package-lock.json
+readme.md

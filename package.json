@@ -1,0 +1,25 @@
+{
+  "name": "gh-runner",
+  "version": "0.0.1",
+  "description": "Докер сборка self-hosted GitHub Actions runner с клиентом MinIO (mc)",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/moogur/docker-for-gh-runner.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/moogur/docker-for-gh-runner/issues"
+  },
+  "homepage": "https://github.com/moogur/docker-for-gh-runner#readme"
+}

@@ -1,0 +1,17 @@
+name: Update task
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  # Переводит задачу из заголовка коммита в in-progress
+  kaneo:
+    uses: moogur/all-workflows/.github/workflows/kaneo.yml@master
+    secrets: inherit
+    permissions:
+      contents: read
+    with:
+      kaneo_scheme: 'single_ready'
+      event_type: 'push'

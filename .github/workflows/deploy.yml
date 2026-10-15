@@ -1,0 +1,26 @@
+name: Deploy
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+jobs:
+  # Задачи из коммитов между двумя последними тегами переводит в done с версией
+  kaneo:
+    uses: moogur/all-workflows/.github/workflows/kaneo.yml@master
+    secrets: inherit
+    permissions:
+      contents: read
+    with:
+      kaneo_scheme: 'single_ready'
+      event_type: 'deploy'
+
+  # Формат тегов образа общий workflow выводит из тега сам; по тегу он ещё и
+  # публикует GitHub-релиз, отсюда contents: write
+  deploy:
+    uses: moogur/all-workflows/.github/workflows/deploy_for_docker_container.yml@master
+    secrets: inherit
+    permissions:
+      contents: write
+      packages: write
